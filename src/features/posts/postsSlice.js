@@ -1,12 +1,12 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit'
-import { sub } from 'date-fns'
+import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { sub } from "date-fns";
 
 const initialState = [
   {
-    id: '1',
-    title: 'First Post!',
-    content: 'Hello!',
-    user: '0',
+    id: "1",
+    title: "First Post!",
+    content: "Hello!",
+    user: "0",
     date: sub(new Date(), { minutes: 10 }).toISOString(),
     reactions: {
       thumbsUp: 0,
@@ -17,10 +17,10 @@ const initialState = [
     },
   },
   {
-    id: '2',
-    title: 'Second Post',
-    content: 'More text',
-    user: '2',
+    id: "2",
+    title: "Second Post",
+    content: "More text",
+    user: "2",
     date: sub(new Date(), { minutes: 5 }).toISOString(),
     reactions: {
       thumbsUp: 0,
@@ -30,15 +30,15 @@ const initialState = [
       eyes: 0,
     },
   },
-]
+];
 
 const postsSlice = createSlice({
-  name: 'posts',
+  name: "posts",
   initialState,
   reducers: {
     postAdded: {
       reducer(state, action) {
-        state.push(action.payload)
+        state.push(action.payload);
       },
       prepare(title, content, userId) {
         return {
@@ -56,31 +56,41 @@ const postsSlice = createSlice({
               eyes: 0,
             },
           },
-        }
+        };
       },
     },
 
-    reactionAdded (state, action) {
+    reactionAdded(state, action) {
       // console.log("working");
-      const { postId, reaction, } = action.payload
-      
-      const existingPost = state.find((post) => post.id === postId)
+      const { postId, reaction } = action.payload;
+
+      const existingPost = state.find((post) => post.id === postId);
       if (existingPost) {
-        existingPost.reactions[reaction]++
+        existingPost.reactions[reaction]++;
       }
     },
     postUpdated(state, action) {
-      const { id, title, content, newTime } = action.payload
-      const existingPost = state.find((post) => post.id === id)
+      const { id, title, content, newTime } = action.payload;
+      const existingPost = state.find((post) => post.id === id);
       if (existingPost) {
-        existingPost.title = title
-        existingPost.content = content
-        existingPost.date = newTime
+        existingPost.title = title;
+        existingPost.content = content;
+        existingPost.date = newTime;
+      }
+    },
+    postDeleted(state, action) {
+      const { idToRemove } = action.payload;
+      var len = state.length;
+      while (len--) {
+        if (state[len].id === idToRemove) {
+          state.splice(len, 1);
+        }
       }
     },
   },
-})
+});
 
-export const { postAdded, postUpdated, reactionAdded } = postsSlice.actions
+export const { postAdded, postUpdated, reactionAdded, postDeleted } =
+  postsSlice.actions;
 
-export default postsSlice.reducer
+export default postsSlice.reducer;
